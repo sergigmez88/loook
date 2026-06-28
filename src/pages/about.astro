@@ -1,0 +1,330 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+---
+
+<BaseLayout title="About — LOOOK Studio">
+  <Nav page="about" />
+
+  <main class="ab">
+
+    <!-- ═══ HERO ═══ -->
+    <header class="ab-hero">
+      <span class="ab-eye" data-reveal>ABOUT — LOOOK STUDIO / EST. 2019</span>
+      <h1 class="ab-title" data-reveal>
+        Not a crew.<br/>
+        <em class="serif lime">A point of view.</em>
+      </h1>
+      <p class="ab-lead" data-reveal data-delay=".12">
+        Audiovisual production studio based in Barcelona — built for the stories that need to be told now.
+      </p>
+      <span class="ab-scrollcue"><span>SCROLL</span><span class="ab-scrollcue-line"></span></span>
+    </header>
+
+    <!-- ═══ IDENTITY ═══ -->
+    <section class="ab-identity">
+      <div class="ab-identity-left" data-reveal>
+        <p class="ab-statement">
+          We make films that <em class="serif lime">remember you</em> — long after the screen goes dark.
+        </p>
+      </div>
+      <div class="ab-identity-right">
+        <p class="ab-body" data-reveal>
+          LOOOK is a creative studio born from a relentless need to capture the world as it happens.
+          We embed ourselves in stories — in the paddock, on the stage, in the streets — and we
+          don't leave until we have something that <em class="serif">matters</em>.
+        </p>
+        <p class="ab-body" data-reveal data-delay=".1">
+          We work with brands, artists, and institutions who believe that great content is not
+          produced — it's <em class="serif lime">lived</em>. No templates. No shortcuts.
+          Just presence, craft, and the obsession to get it right.
+        </p>
+      </div>
+    </section>
+
+    <!-- ═══ PHOTO BREAK ═══ -->
+    <div class="ab-photo" data-reveal>
+      <img
+        src="https://images.unsplash.com/photo-1493804714600-6edb1cd93080?w=1800&q=85"
+        alt="LOOOK Studio — on location"
+        loading="lazy"
+        decoding="async"
+      />
+      <span class="ab-photo-cap">ON LOCATION — SOMEWHERE WORTH BEING</span>
+    </div>
+
+    <!-- ═══ MANIFESTO BLOCK ═══ -->
+    <section class="ab-mani">
+      <div class="ab-mani-left" data-reveal>
+        <p class="ab-mani-stack">
+          <span>WE</span>
+          <span>NEVER</span>
+          <span>LOOOK</span>
+          <span class="ab-mani-back">BA
+            <svg class="ab-mani-eye" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M50 18 C18 18 4 50 4 50 C4 50 18 82 50 82 C82 82 96 50 96 50 C96 50 82 18 50 18 Z"
+                    fill="none" stroke="#E84010" stroke-width="5" stroke-linejoin="round"/>
+              <circle cx="50" cy="50" r="21" fill="none" stroke="#E84010" stroke-width="3.2"/>
+              <ellipse cx="50" cy="50" rx="10" ry="21" fill="none" stroke="#E84010" stroke-width="2.4"/>
+              <ellipse cx="50" cy="50" rx="21" ry="8.5" fill="none" stroke="#E84010" stroke-width="2.4"/>
+              <line x1="29" y1="50" x2="71" y2="50" stroke="#E84010" stroke-width="2.4"/>
+              <line x1="50" y1="29" x2="50" y2="71" stroke="#E84010" stroke-width="2.4"/>
+            </svg>
+          CK</span>
+        </p>
+      </div>
+      <div class="ab-mani-right" data-reveal data-delay=".1">
+        <div class="ab-mani-holder"></div>
+      </div>
+    </section>
+
+    <!-- ═══ DISCIPLINES ═══ -->
+    <section class="ab-disciplines">
+      <span class="ab-section-label" data-reveal>WHAT WE DO</span>
+      <ul class="ab-disc-list">
+        {[
+          { n: '01', title: 'Film & Documentary', desc: 'Long-form narratives, short docs, and branded films that earn real attention.' },
+          { n: '02', title: 'Motorsport', desc: 'From Formula 1 to karting — we live at the edge and bring it back in frame.' },
+          { n: '03', title: 'Brand Content', desc: 'Campaigns, launches, and activations for brands that want to mean something.' },
+          { n: '04', title: 'Music & Artists', desc: 'Music videos, EPKs, and live captures for artists who trust the lens.' },
+          { n: '05', title: 'AI Video', desc: 'Next-generation production: real cameras + generative imagery, fused intentionally.' },
+        ].map((d, i) => (
+          <li class="ab-disc-item" data-reveal data-delay={`${i * 0.08}`}>
+            <span class="ab-disc-num">{d.n}</span>
+            <span class="ab-disc-title">{d.title}</span>
+            <span class="ab-disc-desc">{d.desc}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- ═══ CLIENTS ═══ -->
+    <section class="ab-clients">
+      <span class="ab-section-label" data-reveal>TRUSTED BY</span>
+      <div class="ab-clients-grid" data-reveal data-delay=".05">
+        {['Red Bull', 'Nike', 'MotoGP', 'Primavera Sound', 'Universal Music', 'Ushuaïa', 'BMW', 'Movistar', 'Estrella Damm', 'HBO'].map(c => (
+          <span class="ab-client">{c}</span>
+        ))}
+      </div>
+    </section>
+
+    <!-- ═══ CONTACT ═══ -->
+    <section class="ab-contact">
+      <div class="ab-contact-pre" data-reveal>
+        <span class="ab-eye">START A PROJECT</span>
+      </div>
+      <h2 class="ab-contact-head" data-reveal>
+        Got something<br/>
+        <em class="serif lime">worth making?</em>
+      </h2>
+      <a
+        href="mailto:hola@loookstudio.com"
+        class="ab-email"
+        data-reveal
+        data-delay=".1"
+        data-hover
+      >
+        hola@loookstudio.com
+        <span class="ab-email-arrow">↗</span>
+      </a>
+      <div class="ab-socials" data-reveal data-delay=".18">
+        <a href="#" data-hover>Instagram</a>
+        <a href="#" data-hover>Vimeo</a>
+        <a href="#" data-hover>LinkedIn</a>
+      </div>
+    </section>
+
+  </main>
+</BaseLayout>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-delay]').forEach((el) => {
+    el.style.transitionDelay = `${el.dataset.delay}s`;
+  });
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+</script>
+
+<style>
+.ab {
+  --bg: #14160e; --ink: #e9ece0; --lime: #E84010;
+  --serif: 'Fraunces', Georgia, serif; --mono: 'Space Mono', monospace;
+  background: var(--bg); color: var(--ink);
+}
+.serif  { font-family: var(--serif); font-weight: 400; font-style: italic; }
+.lime   { color: var(--lime); }
+
+[data-reveal] { opacity: 0; transform: translateY(28px); transition: opacity .9s cubic-bezier(.2,.8,.2,1), transform .9s cubic-bezier(.2,.8,.2,1); }
+[data-reveal].in { opacity: 1; transform: none; }
+
+/* ═══ HERO ═══ */
+.ab-hero {
+  min-height: 100vh; display: flex; flex-direction: column;
+  justify-content: flex-end; padding: 16vh 6vw 12vh; position: relative;
+}
+.ab-eye {
+  font-family: var(--mono); font-size: .6rem; font-weight: 700;
+  letter-spacing: .26em; text-transform: uppercase;
+  color: rgba(233,236,224,.4); margin-bottom: 32px; display: block;
+}
+.ab-title {
+  font-size: clamp(3.6rem, 12vw, 13rem); font-weight: 900;
+  letter-spacing: -.045em; line-height: .86;
+}
+.ab-title .serif { font-weight: 400; }
+.ab-lead {
+  font-size: clamp(1rem, 2.2vw, 1.8rem); font-weight: 300; line-height: 1.4;
+  color: rgba(233,236,224,.5); margin-top: 36px; max-width: 32ch;
+}
+.ab-scrollcue {
+  position: absolute; bottom: 6vh; right: 6vw;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+  font-family: var(--mono); font-size: .55rem; font-weight: 700;
+  letter-spacing: .25em; color: rgba(233,236,224,.35);
+}
+.ab-scrollcue-line {
+  width: 1px; height: 40px;
+  background: linear-gradient(var(--lime), transparent);
+  animation: abl 2s ease-in-out infinite;
+}
+@keyframes abl { 0%,100%{opacity:.4;transform:scaleY(.5)} 50%{opacity:1;transform:scaleY(1)} }
+
+/* ═══ IDENTITY ═══ */
+.ab-identity {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 5vw;
+  padding: 12vh 6vw; border-top: 1px solid rgba(232,64,16,.1);
+  align-items: start;
+}
+.ab-statement {
+  font-size: clamp(1.6rem, 3.8vw, 3.4rem); font-weight: 700;
+  line-height: 1.22; letter-spacing: -.025em;
+}
+.ab-statement .serif { font-weight: 400; }
+.ab-identity-right { display: flex; flex-direction: column; gap: 28px; padding-top: 6px; }
+.ab-body {
+  font-size: clamp(.95rem, 1.6vw, 1.25rem); font-weight: 400;
+  line-height: 1.72; color: rgba(233,236,224,.7);
+}
+.ab-body .serif, .ab-body em.serif { font-weight: 400; color: rgba(233,236,224,.9); }
+.ab-body em.serif.lime, .ab-body .serif.lime { color: var(--lime); }
+
+/* ═══ PHOTO ═══ */
+.ab-photo { position: relative; overflow: hidden; height: 58vh; }
+.ab-photo img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.7) brightness(.72); }
+.ab-photo-cap {
+  position: absolute; bottom: 20px; right: 5vw;
+  font-family: var(--mono); font-size: .52rem; font-weight: 700;
+  letter-spacing: .18em; text-transform: uppercase; color: rgba(233,236,224,.35);
+}
+
+/* ═══ MANIFESTO BLOCK ═══ */
+.ab-mani {
+  display: grid; grid-template-columns: 1fr 1fr;
+  padding: 10vh 6vw; border-top: 1px solid rgba(232,64,16,.1);
+  gap: 6vw; align-items: center;
+}
+.ab-mani-stack {
+  display: flex; flex-direction: column;
+  font-size: clamp(3.2rem, 9vw, 9rem); font-weight: 900;
+  letter-spacing: -.04em; line-height: .88;
+}
+.ab-mani-back {
+  display: flex; align-items: center; gap: .12em;
+  white-space: nowrap;
+}
+.ab-mani-eye {
+  width: clamp(2.8rem, 7.5vw, 8rem);
+  flex-shrink: 0;
+  display: inline-block;
+}
+.ab-mani-right { display: flex; }
+.ab-mani-holder {
+  width: 100%; aspect-ratio: 2/3;
+  background: rgba(233,236,224,.05);
+  border: 1px solid rgba(233,236,224,.1);
+}
+
+/* ═══ DISCIPLINES ═══ */
+.ab-disciplines { padding: 12vh 6vw; border-top: 1px solid rgba(232,64,16,.1); }
+.ab-section-label {
+  display: block; font-family: var(--mono); font-size: .6rem; font-weight: 700;
+  letter-spacing: .26em; text-transform: uppercase; color: rgba(233,236,224,.4);
+  margin-bottom: 4vh;
+}
+.ab-disc-list { list-style: none; border-top: 1px solid rgba(233,236,224,.08); }
+.ab-disc-item {
+  display: grid; grid-template-columns: 3rem 1fr 2fr;
+  gap: 2vw; align-items: center;
+  padding: 26px 0; border-bottom: 1px solid rgba(233,236,224,.08);
+  transition: background .2s;
+}
+.ab-disc-item:hover { background: rgba(232,64,16,.03); }
+.ab-disc-num {
+  font-family: var(--mono); font-size: .58rem; font-weight: 700;
+  letter-spacing: .14em; color: rgba(233,236,224,.28);
+}
+.ab-disc-title {
+  font-size: clamp(1.1rem, 2.2vw, 1.8rem); font-weight: 700;
+  letter-spacing: -.02em;
+}
+.ab-disc-desc {
+  font-size: clamp(.85rem, 1.2vw, 1.05rem); font-weight: 400;
+  color: rgba(233,236,224,.45); line-height: 1.5;
+}
+
+/* ═══ CLIENTS ═══ */
+.ab-clients { padding: 10vh 6vw; border-top: 1px solid rgba(232,64,16,.1); }
+.ab-clients-grid {
+  display: flex; flex-wrap: wrap; gap: 0;
+  margin-top: 4vh;
+}
+.ab-client {
+  font-size: clamp(1.4rem, 2.6vw, 2.6rem); font-weight: 700;
+  letter-spacing: -.02em; color: rgba(233,236,224,.16);
+  padding: 6px 20px 6px 0; transition: color .25s;
+}
+.ab-client::after { content: ' ·'; opacity: .3; }
+.ab-client:last-child::after { content: ''; }
+.ab-clients-grid:hover .ab-client { color: rgba(233,236,224,.1); }
+.ab-clients-grid:hover .ab-client:hover { color: var(--ink); }
+
+/* ═══ CONTACT ═══ */
+.ab-contact {
+  min-height: 80vh; display: flex; flex-direction: column;
+  justify-content: center; padding: 16vh 6vw;
+  border-top: 1px solid rgba(232,64,16,.1);
+}
+.ab-contact-pre { margin-bottom: 2vh; }
+.ab-contact-head {
+  font-size: clamp(3.4rem, 12vw, 13rem); font-weight: 900;
+  letter-spacing: -.045em; line-height: .86; margin-bottom: 5vh;
+}
+.ab-contact-head .serif { font-weight: 400; }
+.ab-email {
+  display: inline-flex; align-items: center; gap: 16px;
+  font-size: clamp(1rem, 2.2vw, 2rem); font-weight: 400;
+  color: rgba(233,236,224,.55); border-bottom: 1px solid rgba(233,236,224,.2);
+  padding-bottom: 6px; transition: color .25s, border-color .25s;
+  margin-bottom: 4vh;
+}
+.ab-email:hover { color: var(--lime); border-color: var(--lime); }
+.ab-email-arrow { font-size: 1.1em; }
+.ab-socials { display: flex; gap: 28px; }
+.ab-socials a {
+  font-family: var(--mono); font-size: .6rem; font-weight: 700;
+  letter-spacing: .18em; text-transform: uppercase; color: rgba(233,236,224,.35);
+  transition: color .2s;
+}
+.ab-socials a:hover { color: var(--lime); }
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 860px) {
+  .ab-identity { grid-template-columns: 1fr; gap: 6vh; }
+  .ab-disc-item { grid-template-columns: 2.4rem 1fr; }
+  .ab-disc-desc { display: none; }
+}
+</style>

@@ -1,0 +1,352 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+
+// ── Reel (poster + /reel.mp4 en bucle dentro del marco) ──
+const heroMedia = 'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1600&q=85';
+
+// ── Spreads editoriales: foto + sticker + frase (sin categorías) ──
+const spreads = [
+  {
+    fig: 'FIG. 01', cap: 'TRACKSIDE — BCN',
+    img: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=1400&q=85',
+    l1: 'A fraction of a second,', l2: 'the whole story.',
+    sticker: { v: 'label', top: 'FULL THROTTLE', main: 'NO. 24', bot: 'LOOOK · MEDIA' },
+  },
+  {
+    fig: 'FIG. 02', cap: 'TEN THOUSAND — LIVE',
+    img: 'https://images.unsplash.com/photo-1506157786151-b8491531f063?w=1400&q=85',
+    l1: 'Ten thousand heartbeats,', l2: 'in a single frame.',
+    sticker: { v: 'holo', main: 'LIVE', sub: 'SOLD OUT' },
+  },
+  {
+    fig: 'FIG. 03', cap: 'SOUND & LIGHT',
+    img: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1400&q=85',
+    l1: 'Sound you can see.', l2: 'Light you can feel.',
+    sticker: { v: 'label', top: 'ON STAGE', main: 'ENCORE', bot: '@LOOOKSTUDIO' },
+  },
+];
+
+// ── Índice de trabajos (thumbnail sigue al cursor) ──
+const work = [
+  { n: '01', title: 'MotoGP Season Highlights', client: 'Red Bull Racing', year: '2024', href: '/work/motogp-season-highlights', img: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&q=80' },
+  { n: '02', title: 'Supersonic Festival',       client: 'Primavera Sound', year: '2024', href: '/work/supersonic-festival',       img: 'https://images.unsplash.com/photo-1506157786151-b8491531f063?w=600&q=80' },
+  { n: '03', title: 'Neon Souls',                client: 'LOOOK × IA',      year: '2024', href: '/work/neon-souls-ia',             img: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80' },
+  { n: '04', title: 'Barcelona Drift Series',    client: 'BMW M',           year: '2023', href: '/work/barcelona-drift-series',    img: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=600&q=80' },
+  { n: '05', title: 'Mala Rodríguez Reel',       client: 'Universal Music', year: '2023', href: '/work/mala-rodriguez-reel',       img: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&q=80' },
+  { n: '06', title: 'Ibiza Sunsets',             client: 'Ushuaïa',         year: '2023', href: '/work/ibiza-sunsets-vertical',    img: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600&q=80' },
+];
+
+const marquee = 'WE CAPTURE WHAT MOVES ✦ YOU FEEL IT ✦ LOOOK STUDIO ✦ BARCELONA ✦ ';
+---
+
+<BaseLayout title="LOOOK Studio — Lookbook">
+  <Nav />
+
+  <div class="paper-grain" aria-hidden="true"></div>
+  <!-- thumbnail flotante para el índice -->
+  <img class="float-thumb" id="floatThumb" src="" alt="" aria-hidden="true"/>
+
+  <main class="zine">
+
+    <!-- ═══ 1 · COVER ═══ -->
+    <section class="cover">
+      <div class="cover-meta">
+        <span>LOOOK STUDIO</span>
+        <span>ISSUE Nº01</span>
+        <span id="coverDate">BCN — ··:··</span>
+      </div>
+      <div class="rule"></div>
+
+      <div class="cover-grid">
+        <div class="cover-left">
+          <h1 class="cover-title">LOOOK</h1>
+          <p class="cover-sub">an audiovisual production <em>studio</em></p>
+          <p class="cover-tag">EST. MMXIX — BARCELONA · 41.38°N</p>
+        </div>
+
+        <figure class="cover-reel">
+          <div class="reel-frame">
+            <img class="reel-img" src={heroMedia} alt=""/>
+            <video class="reel-vid" autoplay muted loop playsinline poster={heroMedia}>
+              <source src="/reel.mp4" type="video/mp4"/>
+            </video>
+            <span class="reel-badge">● REEL 2024</span>
+          </div>
+          <figcaption>FIG. 00 — SHOWREEL / 02:14 / DIR. LOOOK</figcaption>
+          <!-- sticker esquina -->
+          <div class="stk stk-bcn">
+            <span class="lbl-t">VISUAL UNIT</span>
+            <span class="lbl-m">BCN</span>
+            <span class="lbl-b">◎ SPAIN · 2019</span>
+          </div>
+          <span class="spark sp1">✦</span>
+        </figure>
+      </div>
+
+      <span class="cover-scroll">↓ SCROLL</span>
+    </section>
+
+    <!-- ═══ MARQUEE ═══ -->
+    <div class="marquee marquee-dark">
+      <div class="mq-track">
+        <span>{marquee.repeat(3)}</span><span>{marquee.repeat(3)}</span>
+      </div>
+    </div>
+
+    <!-- ═══ 2 · SPREADS ═══ -->
+    {spreads.map((s, i) => (
+      <section class:list={['spread', i % 2 === 1 ? 'spread-rev' : '']}>
+        <figure class="spread-fig">
+          <img src={s.img} alt="" loading="lazy"/>
+          <span class="spread-cap">{s.fig} — {s.cap}</span>
+          <div class:list={['stk', `stk-sp-${i}`]}>
+            {s.sticker.v === 'label' && (
+              <div class="lbl"><span class="lbl-t">{s.sticker.top}</span><span class="lbl-m">{s.sticker.main}</span><span class="lbl-b">{s.sticker.bot}</span></div>
+            )}
+            {s.sticker.v === 'holo' && (
+              <div class="holo"><span class="holo-m">{s.sticker.main}</span><span class="holo-s">{s.sticker.sub}</span></div>
+            )}
+          </div>
+        </figure>
+        <div class="spread-txt">
+          <span class="spread-idx">{s.fig}</span>
+          <h2 class="spread-phrase">{s.l1}<br><em>{s.l2}</em></h2>
+          <span class="spread-spark">✦</span>
+        </div>
+      </section>
+    ))}
+
+    <!-- ═══ MARQUEE 2 ═══ -->
+    <div class="marquee marquee-lime">
+      <div class="mq-track mq-rev">
+        <span>SELECTED WORK ✦ INDEX ✦ 2023—2024 ✦ </span><span>SELECTED WORK ✦ INDEX ✦ 2023—2024 ✦ </span><span>SELECTED WORK ✦ INDEX ✦ 2023—2024 ✦ </span>
+      </div>
+    </div>
+
+    <!-- ═══ 3 · WORK INDEX ═══ -->
+    <section class="index">
+      <header class="index-head">
+        <h2 class="index-h">INDEX</h2>
+        <a href="/work" class="index-all">ALL PROJECTS ↗</a>
+      </header>
+      <ul class="index-list" id="indexList">
+        {work.map((p) => (
+          <li class="ix-row">
+            <a href={p.href} class="ix-link" data-hover data-img={p.img}>
+              <span class="ix-n">{p.n}</span>
+              <span class="ix-title">{p.title}</span>
+              <span class="ix-client">{p.client}</span>
+              <span class="ix-year">{p.year}</span>
+              <span class="ix-arrow">↗</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- ═══ 4 · MANIFESTO ═══ -->
+    <section class="zine-mani">
+      <span class="zm-eye">LIFE / MANIFESTO</span>
+      <blockquote class="zm-quote">
+        “Citizens of nowhere —<br><em>why don't you think, jump, fly.”</em>
+      </blockquote>
+      <a href="/life" class="zm-link">READ THE MANIFESTO →</a>
+      <span class="spark sp2">✦</span>
+    </section>
+
+    <!-- ═══ MARQUEE 3 ═══ -->
+    <div class="marquee marquee-dark">
+      <div class="mq-track">
+        <span>{marquee.repeat(3)}</span><span>{marquee.repeat(3)}</span>
+      </div>
+    </div>
+
+    <!-- ═══ 5 · COLOPHON / CONTACT ═══ -->
+    <footer class="colophon">
+      <div class="col-grid">
+        <div class="col-block">
+          <span class="col-label">GET IN TOUCH</span>
+          <a href="mailto:hola@loookstudio.com" class="col-mail" data-hover>hola@loookstudio.com</a>
+        </div>
+        <div class="col-block col-right">
+          <span class="col-label">FOLLOW</span>
+          <div class="col-soc">
+            <a href="#" data-hover>Instagram ↗</a>
+            <a href="#" data-hover>Vimeo ↗</a>
+            <a href="#" data-hover>LinkedIn ↗</a>
+          </div>
+        </div>
+      </div>
+      <div class="rule"></div>
+      <div class="col-foot">
+        <span>© LOOOK STUDIO MMXXV</span>
+        <span>MADE IN BARCELONA</span>
+        <span>Nº01 — LOOOK®</span>
+      </div>
+    </footer>
+
+  </main>
+</BaseLayout>
+
+<script>
+  // reloj de portada
+  const cd = document.getElementById('coverDate');
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const tick = () => { const d = new Date(); if (cd) cd.textContent = `BCN — ${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+  tick(); setInterval(tick, 1000);
+
+  // thumbnail que sigue al cursor en el índice
+  const thumb = document.getElementById('floatThumb') as HTMLImageElement;
+  const links = document.querySelectorAll<HTMLElement>('.ix-link');
+  let raf = 0, tx = 0, ty = 0, cx = 0, cy = 0;
+  const loop = () => { cx += (tx - cx) * 0.16; cy += (ty - cy) * 0.16; if (thumb) thumb.style.transform = `translate(${cx}px, ${cy}px) translate(-50%,-50%)`; raf = requestAnimationFrame(loop); };
+  links.forEach((a) => {
+    a.addEventListener('mouseenter', (e) => {
+      const me = e as MouseEvent;
+      tx = cx = me.clientX; ty = cy = me.clientY;
+      if (thumb) {
+        thumb.src = a.dataset.img || '';
+        thumb.style.transform = `translate(${cx}px, ${cy}px) translate(-50%,-50%)`;
+        thumb.classList.add('on');
+      }
+      if (!raf) loop();
+    });
+    a.addEventListener('mousemove', (e) => { tx = (e as MouseEvent).clientX; ty = (e as MouseEvent).clientY; });
+    a.addEventListener('mouseleave', () => { thumb?.classList.remove('on'); });
+  });
+</script>
+
+<style is:global>
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+</style>
+
+<style>
+/* ═══ TOKENS ═══ */
+.zine {
+  --paper: #efe9e0; --ink: #14110d; --lime: #B8FF00;
+  --serif: 'Instrument Serif', Georgia, serif;
+  --mono: 'Space Mono', monospace;
+  background: var(--paper); color: var(--ink);
+  overflow-x: hidden;
+}
+.paper-grain {
+  position: fixed; inset: 0; z-index: 900; pointer-events: none; opacity: .35; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+.rule { height: 1.5px; background: var(--ink); width: 100%; }
+
+/* ═══ STICKERS ═══ */
+.stk { position: absolute; z-index: 5; }
+.lbl, .stk-bcn { display: flex; flex-direction: column; gap: 2px; background: #fff; color: #000; padding: 9px 14px; border: 2px solid #000; box-shadow: 4px 4px 0 rgba(0,0,0,.9); }
+.lbl-t { font-size: 7px; font-weight: 700; letter-spacing: .3em; opacity: .45; text-transform: uppercase; font-family: var(--mono); }
+.lbl-m { font-size: 22px; font-weight: 900; line-height: 1; letter-spacing: -.02em; }
+.lbl-b { font-size: 7px; letter-spacing: .15em; opacity: .4; text-transform: uppercase; font-family: var(--mono); }
+.holo { background: linear-gradient(135deg,#BF5AF2,#0A84FF,#30D158,#B8FF00); background-size: 300% 300%; animation: holo 4s ease infinite; color: #fff; padding: 11px 17px; border-radius: 5px; display: flex; flex-direction: column; gap: 3px; box-shadow: 0 0 0 3px #fff, 5px 5px 0 rgba(0,0,0,.85); }
+.holo-m { font-size: 14px; font-weight: 900; letter-spacing: .12em; } .holo-s { font-size: 7px; opacity: .9; letter-spacing: .15em; }
+@keyframes holo { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+.spark { position: absolute; font-size: 1.4rem; color: var(--ink); z-index: 5; animation: spk 3s ease-in-out infinite; }
+@keyframes spk { 0%,100%{transform:scale(1) rotate(0)} 50%{transform:scale(1.3) rotate(20deg)} }
+
+/* ═══ 1 · COVER ═══ */
+.cover { padding: 92px 4vw 0; position: relative; min-height: 100vh; display: flex; flex-direction: column; }
+.cover-meta { display: flex; justify-content: space-between; font-family: var(--mono); font-size: .6rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; padding-bottom: 12px; }
+.cover-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 40px; align-items: center; flex: 1; padding: 2vw 0; }
+.cover-left { display: flex; flex-direction: column; }
+.cover-title { font-size: clamp(5rem, 20vw, 21rem); font-weight: 900; letter-spacing: -.05em; line-height: .8; }
+.cover-sub { font-family: var(--serif); font-size: clamp(1.4rem, 3.4vw, 3rem); line-height: 1.05; margin-top: 14px; letter-spacing: -.01em; }
+.cover-sub em { font-style: italic; }
+.cover-tag { font-family: var(--mono); font-size: .62rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; margin-top: 28px; opacity: .55; }
+
+.cover-reel { position: relative; }
+.reel-frame { position: relative; border: 6px solid var(--ink); aspect-ratio: 4/3; overflow: hidden; box-shadow: 10px 12px 0 rgba(20,17,13,.12); }
+.reel-img, .reel-vid { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.reel-badge { position: absolute; top: 12px; left: 12px; background: #fff; color: #000; font-family: var(--mono); font-size: .55rem; font-weight: 700; letter-spacing: .14em; padding: 5px 10px; }
+.cover-reel figcaption { font-family: var(--mono); font-size: .58rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-top: 12px; opacity: .6; }
+.stk-bcn { position: absolute; bottom: 28px; left: -26px; transform: rotate(-7deg); }
+.sp1 { top: -14px; right: 4%; }
+.cover-scroll { font-family: var(--mono); font-size: .6rem; font-weight: 700; letter-spacing: .2em; padding: 20px 0 26px; }
+
+/* ═══ MARQUEE ═══ */
+.marquee { overflow: hidden; border-top: 1.5px solid var(--ink); border-bottom: 1.5px solid var(--ink); }
+.marquee-dark { background: var(--ink); color: var(--paper); }
+.marquee-lime { background: var(--lime); color: var(--ink); }
+.mq-track { display: flex; white-space: nowrap; animation: mq 28s linear infinite; }
+.mq-rev { animation-direction: reverse; }
+.mq-track span { font-size: clamp(1.4rem, 3vw, 2.4rem); font-weight: 900; letter-spacing: -.01em; padding: 14px 0; text-transform: uppercase; }
+@keyframes mq { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ═══ 2 · SPREADS ═══ */
+.spread { display: grid; grid-template-columns: 1.1fr .9fr; gap: 4vw; align-items: center; padding: 9vh 4vw; position: relative; }
+.spread-rev { grid-template-columns: .9fr 1.1fr; }
+.spread-rev .spread-fig { order: 2; }
+.spread-rev .spread-txt { order: 1; }
+.spread-fig { position: relative; aspect-ratio: 4/5; overflow: hidden; border: 5px solid var(--ink); }
+.spread-fig img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s cubic-bezier(.2,.8,.2,1); }
+.spread:hover .spread-fig img { transform: scale(1.05); }
+.spread-cap { position: absolute; bottom: 0; left: 0; background: var(--ink); color: var(--paper); font-family: var(--mono); font-size: .55rem; font-weight: 700; letter-spacing: .12em; padding: 6px 12px; text-transform: uppercase; }
+.stk-sp-0 { top: 22px; right: -22px; transform: rotate(7deg); }
+.stk-sp-1 { top: 18px; left: -22px; transform: rotate(-8deg); }
+.stk-sp-2 { bottom: 60px; right: -22px; transform: rotate(6deg); }
+.spread-txt { position: relative; }
+.spread-idx { font-family: var(--mono); font-size: .62rem; font-weight: 700; letter-spacing: .2em; opacity: .5; display: block; margin-bottom: 18px; }
+.spread-phrase { font-size: clamp(2rem, 5vw, 4.6rem); font-weight: 800; line-height: 1.02; letter-spacing: -.03em; }
+.spread-phrase em { font-family: var(--serif); font-weight: 400; font-style: italic; letter-spacing: -.01em; }
+.spread-spark { position: absolute; bottom: -10px; left: 2px; font-size: 1.3rem; }
+
+/* ═══ 3 · INDEX ═══ */
+.index { padding: 11vh 4vw; }
+.index-head { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1.5px solid var(--ink); padding-bottom: 16px; margin-bottom: 8px; }
+.index-h { font-size: clamp(2.6rem, 7vw, 7rem); font-weight: 900; letter-spacing: -.04em; }
+.index-all { font-family: var(--mono); font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; transition: color .2s; }
+.index-all:hover { color: var(--lime); -webkit-text-stroke: .4px var(--ink); }
+.index-list { list-style: none; }
+.ix-row { border-bottom: 1.5px solid rgba(20,17,13,.22); }
+.ix-link { display: grid; grid-template-columns: 50px 1.4fr 1fr 70px 30px; align-items: center; gap: 20px; padding: 26px 8px; color: var(--ink); transition: padding .3s, background .3s; }
+.ix-link:hover { padding-left: 26px; background: var(--ink); color: var(--paper); }
+.ix-n { font-family: var(--mono); font-size: .68rem; font-weight: 700; letter-spacing: .1em; opacity: .6; }
+.ix-title { font-size: clamp(1.3rem, 3vw, 2.6rem); font-weight: 700; letter-spacing: -.02em; }
+.ix-client { font-family: var(--mono); font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; opacity: .7; }
+.ix-year { font-family: var(--mono); font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-align: right; }
+.ix-arrow { font-size: 1.1rem; text-align: right; transition: transform .25s; }
+.ix-link:hover .ix-arrow { transform: translate(4px,-4px); }
+
+/* thumbnail flotante */
+.float-thumb { position: fixed; top: 0; left: 0; width: 220px; height: 280px; object-fit: cover; z-index: 800; pointer-events: none; opacity: 0; border: 4px solid var(--paper, #efe9e0); box-shadow: 0 20px 50px rgba(0,0,0,.4); transition: opacity .25s; }
+.float-thumb.on { opacity: 1; }
+
+/* ═══ 4 · MANIFESTO ═══ */
+.zine-mani { padding: 14vh 4vw; position: relative; border-top: 1.5px solid var(--ink); }
+.zm-eye { font-family: var(--mono); font-size: .62rem; font-weight: 700; letter-spacing: .26em; text-transform: uppercase; opacity: .55; display: block; margin-bottom: 30px; }
+.zm-quote { font-size: clamp(1.8rem, 5vw, 4.4rem); font-weight: 800; line-height: 1.12; letter-spacing: -.03em; max-width: 14ch; margin-bottom: 36px; }
+.zm-quote em { font-family: var(--serif); font-weight: 400; font-style: italic; }
+.zm-link { font-family: var(--mono); font-size: .7rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; border-bottom: 2px solid var(--ink); padding-bottom: 4px; transition: color .2s, border-color .2s; }
+.zm-link:hover { color: var(--lime); }
+.sp2 { top: 16vh; right: 8vw; font-size: 2rem; }
+
+/* ═══ 5 · COLOPHON ═══ */
+.colophon { background: var(--ink); color: var(--paper); padding: 9vh 4vw 30px; }
+.col-grid { display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap; margin-bottom: 8vh; }
+.col-label { font-family: var(--mono); font-size: .6rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; opacity: .5; display: block; margin-bottom: 18px; }
+.col-mail { font-size: clamp(1.8rem, 5vw, 4.2rem); font-weight: 700; letter-spacing: -.02em; color: var(--paper); transition: color .2s; }
+.col-mail:hover { color: var(--lime); }
+.col-right { text-align: right; }
+.col-soc { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+.col-soc a { font-family: var(--serif); font-size: clamp(1.1rem, 2.4vw, 1.9rem); font-style: italic; color: var(--paper); transition: color .2s; }
+.col-soc a:hover { color: var(--lime); }
+.colophon .rule { background: rgba(239,233,224,.25); }
+.col-foot { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-family: var(--mono); font-size: .58rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; opacity: .55; padding-top: 20px; }
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 860px) {
+  .cover-grid { grid-template-columns: 1fr; gap: 28px; }
+  .stk-bcn { left: auto; right: 10px; bottom: -18px; }
+  .spread, .spread-rev { grid-template-columns: 1fr; gap: 30px; }
+  .spread-rev .spread-fig { order: 1; } .spread-rev .spread-txt { order: 2; }
+  .stk-sp-0, .stk-sp-1, .stk-sp-2 { right: 10px; left: auto; }
+  .ix-link { grid-template-columns: 34px 1fr 24px; }
+  .ix-client, .ix-year { display: none; }
+  .float-thumb { display: none; }
+  .col-grid { flex-direction: column; } .col-right { text-align: left; } .col-soc { align-items: flex-start; }
+}
+</style>

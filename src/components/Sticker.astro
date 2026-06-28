@@ -1,0 +1,99 @@
+---
+export interface Props {
+  label: string;
+  color?: string;
+  textColor?: string;
+  rotate?: number;
+  shape?: 'blob1' | 'blob2' | 'blob3' | 'blob4' | 'blob5' | 'star' | 'pill';
+  size?: 'sm' | 'md' | 'lg';
+  href?: string;
+}
+
+const {
+  label,
+  color = '#FFD60A',
+  textColor = '#000',
+  rotate = -3,
+  shape = 'blob1',
+  size = 'md',
+  href,
+} = Astro.props;
+
+const clipPaths: Record<string, string> = {
+  blob1: 'polygon(5% 10%, 20% 2%, 50% 0%, 80% 3%, 95% 12%, 100% 40%, 97% 70%, 88% 92%, 60% 100%, 30% 98%, 8% 88%, 0% 60%, 2% 30%)',
+  blob2: 'polygon(10% 0%, 90% 5%, 100% 30%, 95% 70%, 85% 100%, 40% 95%, 5% 85%, 0% 50%, 3% 20%)',
+  blob3: 'polygon(50% 0%, 95% 15%, 100% 55%, 80% 95%, 40% 100%, 5% 80%, 0% 40%, 15% 10%)',
+  blob4: 'polygon(0% 20%, 15% 0%, 60% 5%, 100% 15%, 95% 60%, 80% 100%, 35% 95%, 0% 75%)',
+  blob5: 'polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%)',
+  star: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)',
+  pill: 'none',
+};
+
+const sizeMap = { sm: '80px', md: '120px', lg: '160px' };
+const dim = sizeMap[size];
+const clip = clipPaths[shape] !== 'none' ? clipPaths[shape] : undefined;
+
+const Tag = href ? 'a' : 'span';
+---
+
+<Tag
+  href={href}
+  class:list={['sticker', `sticker--${shape}`, `sticker--${size}`, { 'sticker--pill': shape === 'pill' }]}
+  style={`--sticker-color:${color};--sticker-text:${textColor};--sticker-rotate:${rotate}deg;--sticker-size:${dim};${clip ? `clip-path:${clip};` : ''}`}
+  data-hover
+>
+  <span class="sticker-label">{label}</span>
+  <span class="sticker-shine"></span>
+</Tag>
+
+<style>
+.sticker {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--sticker-size);
+  height: var(--sticker-size);
+  background: var(--sticker-color);
+  color: var(--sticker-text);
+  transform: rotate(var(--sticker-rotate));
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s;
+  filter: drop-shadow(3px 4px 0px rgba(0,0,0,0.5));
+  text-align: center;
+  user-select: none;
+  flex-shrink: 0;
+}
+.sticker:hover {
+  transform: rotate(0deg) scale(1.12);
+  filter: drop-shadow(6px 8px 0px rgba(0,0,0,0.7));
+  z-index: 10;
+}
+
+.sticker--pill {
+  border-radius: 100px;
+  width: auto;
+  height: auto;
+  padding: 10px 22px;
+  clip-path: none !important;
+}
+
+.sticker-label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  z-index: 1;
+  padding: 0 8px;
+}
+
+.sticker--lg .sticker-label { font-size: 0.75rem; }
+
+.sticker-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 2;
+}
+</style>

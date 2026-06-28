@@ -1,0 +1,511 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Nav from '../../components/Nav.astro';
+import { projects } from '../../content/projects';
+import { resolveImg } from '../../utils/resolveImg';
+
+export async function getStaticPaths() {
+  return projects.map((p) => ({ params: { slug: p.slug }, props: { project: p } }));
+}
+
+const { project } = Astro.props;
+const template = project.template || 'feature';
+
+function getYoutubeId(url: string) {
+  const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([^&\n?#]+)/);
+  return m ? m[1] : null;
+}
+function getVimeoId(url: string) {
+  const m = url.match(/vimeo\.com\/(\d+)/);
+  return m ? m[1] : null;
+}
+
+function creditCols(credits: { role: string; name: string }[], n = 3) {
+  const size = Math.ceil(credits.length / n);
+  return Array.from({ length: n }, (_, i) => credits.slice(i * size, (i + 1) * size)).filter(c => c.length > 0);
+}
+
+function getEmbedUrl(url: string): string | null {
+  const yt = getYoutubeId(url);
+  if (yt) return `https://www.youtube.com/embed/${yt}?rel=0`;
+  const vm = getVimeoId(url);
+  if (vm) {
+    const hashMatch = url.match(/vimeo\.com\/\d+\/([a-f0-9]+)/);
+    const hash = hashMatch ? `?h=${hashMatch[1]}` : '?byline=0&portrait=0';
+    return `https://player.vimeo.com/video/${vm}${hash}`;
+  }
+  return null;
+}
+
+let embedUrl: string | null = project.videoUrl ? getEmbedUrl(project.videoUrl) : null;
+const embedUrls: (string | null)[] = (project.videos ?? []).map(getEmbedUrl);
+---
+
+<BaseLayout title={`${project.title} — LOOOK Studio`} description={project.description}>
+  <Nav page="work" />
+
+  <article class="px" data-tpl={template}>
+
+    <!-- ═══ HERO ═══ -->
+    <header class="px-hero">
+      <img class="px-hero-img" src={resolveImg(project.thumb2 ?? project.thumb)} alt={project.title}/>
+      <div class="px-hero-grade"></div>
+      <a href={project.eventOnly ? '/events' : '/work'} class="px-back" data-hover>{project.eventOnly ? '← EVENTS' : '← WORK'}</a>
+      <div class="px-hero-mid">
+        <h1 class="px-title">{project.shortTitle ?? project.title}</h1>
+        <div class="px-tags">
+          <span style={`color:${project.categoryColor}`}>{project.format}</span>
+          <span class="px-dot">·</span><span>{project.client}</span>
+          <span class="px-dot">·</span><span>{project.year}</span>
+        </div>
+      </div>
+      {project.quote && (
+        <div class="px-quote"><p>"{project.quote}"</p><span>— {project.quoteBy}</span></div>
+      )}
+    </header>
+
+    <!-- ═══ SYNOPSIS — siempre igual: logline + descripción + Client/Year/Format ═══ -->
+    <section class="px-syn">
+      <div class="px-syn-l">
+        <span class="px-label">SYNOPSIS</span>
+        <h2 class="px-logline" data-reveal>{project.logline}</h2>
+      </div>
+      <div class="px-syn-r" data-reveal>
+        <p class="px-desc">{project.description}</p>
+        <div class="px-credits">
+          <div><span class="px-ck">Client</span><span>{project.client}</span></div>
+          <div><span class="px-ck">Year</span><span>{project.year}</span></div>
+          <div><span class="px-ck">Format</span><span>{project.formatLabel ?? project.format}</span></div>
+          {project.role && <div><span class="px-ck">Role</span><span>{project.role}</span></div>}
+          {project.productionCompany && <div><span class="px-ck">Production Company</span><span>{project.productionCompany}</span></div>}
+          {project.watchUrl && <div><span class="px-ck">Watch</span><a class="px-watch" href={project.watchUrl} target="_blank" rel="noopener">{project.watchLabel ?? 'Watch film'} ↗</a></div>}
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ A · FEATURE — video + stills ═══════════ -->
+    {template === 'feature' && (
+      <>
+        <section class="px-video" data-reveal>
+          <div class="px-frame">
+            {embedUrl
+              ? <iframe src={embedUrl} frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title={project.title}></iframe>
+              : <div class="px-frame-empty"><span>VIDEO COMING SOON</span></div>
+            }
+          </div>
+        </section>
+
+        {/* Equipo técnico — entre vídeo y stills */}
+        {project.credits && project.credits.length > 0 && (
+          <section class="px-team" data-reveal>
+            <span class="px-label px-team-label">EQUIPO</span>
+            <div class="px-team-cols">
+              {project.credits
+                ? creditCols(project.credits).map(col => (
+                    <div class="px-team-col">
+                      {col.map(c => (
+                        <div class="px-team-row">
+                          <span class="px-ck">{c.role}</span>
+                          <span>{c.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ))
+                : (
+                    <div class="px-team-col">
+                      <div class="px-team-row"><span class="px-ck">Role</span><span>{project.role}</span></div>
+                    </div>
+                  )
+              }
+            </div>
+          </section>
+        )}
+
+        {project.images && project.images.length > 0 && (
+          <section class="px-stills px-stills-3">
+            {project.images.map((img, i) => (
+              <figure class="px-still" data-reveal>
+                <img src={resolveImg(img)} alt={`${project.title} — still ${i + 1}`} loading="lazy" decoding="async"/>
+                <figcaption>STILL {String(i + 1).padStart(2, '0')}</figcaption>
+              </figure>
+            ))}
+          </section>
+        )}
+      </>
+    )}
+
+    <!-- ═══════════ B · GALLERY — 3×3 stills 16:9 ═══════════ -->
+    {template === 'gallery' && project.images && project.images.length > 0 && (
+      <section class="px-gallery" data-reveal>
+        {project.images.map((img, i) => (
+          <figure class="pg-cell">
+            <img src={resolveImg(img)} alt={`${project.title} — ${i + 1}`} loading="lazy" decoding="async"/>
+            <figcaption>STILL {String(i + 1).padStart(2, '0')}</figcaption>
+          </figure>
+        ))}
+      </section>
+    )}
+
+    <!-- ═══════════ B2 · GALLERY-MIXED — H/H/V · V/H/H · H/V/H ═══════════ -->
+    {template === 'gallery-mixed' && project.images && project.images.length > 0 && (
+      <section class="px-gmix" data-reveal>
+        {project.images.map((img, i) => (
+          <figure class="pgx-cell">
+            <img src={resolveImg(img)} alt={`${project.title} — ${i + 1}`} loading="lazy" decoding="async"/>
+          </figure>
+        ))}
+      </section>
+    )}
+
+    <!-- ═══════════ C · VERTICAL — 4 holders ═══════════ -->
+    {template === 'vertical' && (
+      <>
+        {embedUrl && (
+          <section class="px-vplayer" data-reveal>
+            <div class="px-vframe">
+              <iframe src={embedUrl} frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title={project.title}></iframe>
+            </div>
+          </section>
+        )}
+        {project.reels && project.reels.length > 0 && (
+          <section class="px-vrow px-vrow--reels">
+            {project.reels.map((code, i) => (
+              <figure class="px-vhold px-vhold--reel" data-reveal>
+                <iframe
+                  data-src={`https://www.instagram.com/p/${code}/embed/`}
+                  frameborder="0"
+                  scrolling="no"
+                  allowtransparency={true}
+                  title={`Reel ${i + 1}`}
+                ></iframe>
+                <figcaption>NO. {String(i + 1).padStart(2, '0')}</figcaption>
+              </figure>
+            ))}
+          </section>
+        )}
+        {!project.reels && project.images && project.images.length > 0 && (
+          <section
+            class="px-vrow"
+            style={project.gridCols ? `grid-template-columns: repeat(${project.gridCols}, 1fr)` : undefined}
+          >
+            {project.images.map((img, i) => (
+              <figure class="px-vhold" data-reveal>
+                {img.endsWith('.mp4')
+                  ? <video src={resolveImg(img)} autoplay muted loop playsinline></video>
+                  : <img src={resolveImg(img)} alt={`${project.title} — ${i + 1}`} loading="lazy" decoding="async"/>
+                }
+                <figcaption>NO. {String(i + 1).padStart(2, '0')}</figcaption>
+              </figure>
+            ))}
+          </section>
+        )}
+      </>
+    )}
+
+    <!-- ═══════════ D · MOSAIC / CONTENT ═══════════ -->
+    {(template === 'mosaic' || template === 'content') && project.media && project.media.length > 0 && (
+      <section class="px-mosaic">
+        {project.media.map((m) => (
+          <figure class:list={['pm', m.span === 2 ? 'pm-2' : '']} data-reveal>
+            {m.type === 'video'
+              ? <video src={m.src} autoplay muted loop playsinline preload="metadata"></video>
+              : <img src={resolveImg(m.src)} alt={project.title} loading="lazy" decoding="async"/>}
+          </figure>
+        ))}
+      </section>
+    )}
+
+    <!-- ═══════════ F · MULTIREGION — video + country strip + grid mixto ═══════════ -->
+    {template === 'multiregion' && (
+      <>
+        <section class="px-video" data-reveal>
+          <div class="px-frame">
+            {embedUrl
+              ? <iframe src={embedUrl} frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title={project.title}></iframe>
+              : <div class="px-frame-empty"><span>VIDEO COMING SOON</span></div>
+            }
+          </div>
+        </section>
+
+        {project.countries && project.countries.length > 0 && (
+          <section class="px-regions" data-reveal>
+            <div class="px-region-strip">
+              {project.countries.map((c) => (
+                <div class="px-region-card">
+                  {c.image
+                    ? <img src={resolveImg(c.image)} alt={c.name} loading="lazy" decoding="async"/>
+                    : <div class="prg-empty"></div>
+                  }
+                  <span class="px-region-label">{c.name.toUpperCase()}</span>
+                </div>
+              ))}
+            </div>
+            <div class="px-region-row">
+              {project.images && project.images.length >= 4
+                ? project.images.slice(0, 4).map((img, i) => (
+                    <div class:list={[i === 2 ? 'prc-h' : 'prc-v']}>
+                      <img src={resolveImg(img)} alt="" loading="lazy" decoding="async"/>
+                    </div>
+                  ))
+                : <>
+                    <div class="prc-v"><div class="prg-empty prg-empty-h"></div></div>
+                    <div class="prc-v"><div class="prg-empty prg-empty-h"></div></div>
+                    <div class="prc-h"><div class="prg-empty prg-empty-h"></div></div>
+                    <div class="prc-v"><div class="prg-empty prg-empty-h"></div></div>
+                  </>
+              }
+            </div>
+          </section>
+        )}
+
+        {project.credits && project.credits.length > 0 && (
+          <section class="px-team" data-reveal>
+            <span class="px-label px-team-label">EQUIPO</span>
+            <div class="px-team-cols px-team-cols-4">
+              {creditCols(project.credits, 4).map(col => (
+                <div class="px-team-col">
+                  {col.map(c => (
+                    <div class="px-team-row">
+                      <span class="px-ck">{c.role}</span>
+                      <span>{c.name}</span>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+      </>
+    )}
+
+    <!-- ═══════════ E · MULTI-VIDEO — 3 embeds apilados ═══════════ -->
+    {template === 'multi-video' && (
+      <section class="px-multivid" data-reveal>
+        {embedUrls.map((url) => url && (
+          <div class="px-mv-frame">
+            <iframe src={url} frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+          </div>
+        ))}
+        {embedUrls.length === 0 && (
+          <div class="px-mv-frame"><div class="px-frame-empty"><span>VIDEOS COMING SOON</span></div></div>
+        )}
+      </section>
+    )}
+
+    <!-- ═══ EQUIPO TÉCNICO — al final para gallery / vertical / mosaic / content / multi-video ═══ -->
+    {template !== 'feature' && template !== 'multiregion' && (project.credits || project.role) && (
+      <section class="px-team" data-reveal>
+        <span class="px-label px-team-label">EQUIPO</span>
+        <div class="px-team-cols">
+          {project.credits
+            ? creditCols(project.credits).map(col => (
+                <div class="px-team-col">
+                  {col.map(c => (
+                    <div class="px-team-row">
+                      <span class="px-ck">{c.role}</span>
+                      <span>{c.name}</span>
+                    </div>
+                  ))}
+                </div>
+              ))
+            : null
+          }
+        </div>
+      </section>
+    )}
+
+  </article>
+</BaseLayout>
+
+<script>
+  const io = new IntersectionObserver((es) => {
+    es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.08, rootMargin: '0px 0px 0px 0px' });
+  document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+
+  // Lazy-load Instagram reels when they enter the viewport
+  const reelObs = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        const iframe = e.target as HTMLIFrameElement;
+        if (iframe.dataset.src) {
+          iframe.src = iframe.dataset.src;
+          delete iframe.dataset.src;
+        }
+        reelObs.unobserve(iframe);
+      }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll<HTMLIFrameElement>('iframe[data-src]').forEach((el) => reelObs.observe(el));
+</script>
+
+<style>
+.px {
+  --bg: #14160e; --ink: #e9ece0; --lime: #E84010;
+  --mono: 'Space Mono', monospace;
+  background: var(--bg); color: var(--ink);
+}
+[data-reveal] { opacity: 0; transform: translateY(28px); transition: opacity .8s ease, transform .8s cubic-bezier(.2,.8,.2,1); }
+[data-reveal].in { opacity: 1; transform: none; }
+
+/* ── HERO ── */
+.px-hero { position: relative; height: 92vh; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
+.px-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(.9) contrast(1.05); }
+.px-hero-grade { position: absolute; inset: 0; background: linear-gradient(rgba(20,22,14,.35), rgba(20,22,14,.2) 40%, rgba(20,22,14,.92)); }
+.px-back { position: absolute; top: 86px; left: 22px; z-index: 3; font-family: var(--mono); font-size: .62rem; font-weight: 700; letter-spacing: .16em; color: rgba(233,236,224,.7); }
+.px-back:hover { color: var(--lime); }
+.px-hero-mid { position: relative; z-index: 2; padding: 0 22px 4vh; }
+.px-title { font-size: clamp(3rem, 11vw, 11rem); font-weight: 900; letter-spacing: -.04em; line-height: .82; text-transform: uppercase; }
+.px-tags { display: flex; align-items: center; gap: 12px; margin-top: 22px; font-family: var(--mono); font-size: .64rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(233,236,224,.78); }
+.px-dot { opacity: .4; }
+.px-quote { position: absolute; right: 22px; bottom: 4vh; z-index: 2; max-width: 320px; text-align: right; }
+.px-quote p { font-size: clamp(1rem, 1.8vw, 1.45rem); font-weight: 600; line-height: 1.3; letter-spacing: -.01em; margin-bottom: 8px; }
+.px-quote span { font-family: var(--mono); font-size: .56rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: rgba(233,236,224,.55); }
+
+/* ── SYNOPSIS ── */
+.px-syn { display: grid; grid-template-columns: 1.1fr .9fr; gap: 6vw; padding: 10vh 22px 3vh; border-bottom: 1px solid rgba(233,236,224,.12); align-items: start; }
+.px-label { font-family: var(--mono); font-size: .6rem; font-weight: 700; letter-spacing: .26em; color: rgba(233,236,224,.4); text-transform: uppercase; display: block; margin-bottom: 28px; }
+.px-logline { font-size: clamp(1.8rem, 4vw, 3.6rem); font-weight: 800; line-height: 1.08; letter-spacing: -.03em; text-transform: uppercase; }
+.px-desc { font-size: 1.05rem; font-weight: 300; line-height: 1.75; color: rgba(233,236,224,.7); margin-bottom: 38px; }
+.px-credits { display: flex; flex-direction: column; }
+.px-credits div { display: flex; justify-content: space-between; gap: 20px; padding: 14px 0; border-top: 1px solid rgba(233,236,224,.12); font-family: var(--mono); font-size: .64rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.px-ck { color: rgba(233,236,224,.4); flex-shrink: 0; }
+.px-watch { color: var(--lime); transition: opacity .2s; }
+.px-watch:hover { opacity: .7; }
+
+/* ── A · FEATURE ── */
+.px-video { padding: 0 8vw 0; }
+.px-frame { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; background: #0c0c0c; border: 1px solid rgba(233,236,224,.14); }
+.px-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+.px-frame-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: .65rem; font-weight: 700; letter-spacing: .22em; color: rgba(233,236,224,.2); }
+.px-stills { display: grid; gap: 10px; padding: 0 22px 0; }
+.px-stills-3 { grid-template-columns: repeat(3, 1fr); }
+.px-still { position: relative; overflow: hidden; background: #222; margin: 0; }
+.px-still img { width: 100%; aspect-ratio: 4/3; object-fit: cover; transition: transform .9s cubic-bezier(.2,.8,.2,1); }
+.px-still:hover img { transform: scale(1.04); }
+.px-still figcaption { position: absolute; bottom: 10px; left: 10px; font-family: var(--mono); font-size: .52rem; font-weight: 700; letter-spacing: .16em; color: rgba(255,255,255,.85); background: rgba(0,0,0,.4); backdrop-filter: blur(6px); padding: 4px 9px; }
+
+/* ── B · GALLERY ── */
+.px-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 22px 0; }
+
+/* ── B2 · GALLERY-MIXED — masonry 3 cols, no gaps ── */
+.px-gmix {
+  columns: 3;
+  column-gap: 10px;
+  padding: 0 22px 0;
+}
+.pgx-cell {
+  break-inside: avoid;
+  margin-bottom: 10px;
+  overflow: hidden;
+  background: #1a1c14;
+  display: block;
+}
+.pgx-cell img {
+  width: 100%; display: block;
+  transition: transform .9s cubic-bezier(.2,.8,.2,1);
+}
+.pgx-cell:hover img { transform: scale(1.04); }
+.pg-cell { position: relative; overflow: hidden; background: #111; margin: 0; }
+.pg-cell img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; transition: transform .9s cubic-bezier(.2,.8,.2,1); }
+.pg-cell:hover img { transform: scale(1.04); }
+.pg-cell figcaption { display: none; }
+.px-still figcaption { display: none; }
+
+/* ── C · VERTICAL ── */
+.px-vplayer { padding: 0 22px 0; }
+.px-vframe { position: relative; aspect-ratio: 9/16; max-width: 430px; margin: 0 auto; overflow: hidden; background: #0c0c0c; border: 1px solid rgba(233,236,224,.14); }
+.px-vframe iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+.px-vrow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 0 22px 0; }
+.px-vhold { position: relative; overflow: hidden; background: #222; margin: 0; }
+.px-vhold img,
+.px-vhold video { width: 100%; aspect-ratio: 9/16; object-fit: cover; display: block; transition: transform .9s cubic-bezier(.2,.8,.2,1); }
+.px-vhold:hover img,
+.px-vhold:hover video { transform: scale(1.04); }
+.px-vhold figcaption { position: absolute; bottom: 10px; left: 10px; font-family: var(--mono); font-size: .5rem; font-weight: 700; letter-spacing: .16em; color: rgba(255,255,255,.85); background: rgba(0,0,0,.4); backdrop-filter: blur(6px); padding: 3px 8px; }
+.px-vrow--reels { padding: 0; margin-bottom: 0; }
+.px-vhold--reel { background: #14160e; overflow: hidden; position: relative; margin-bottom: 0; }
+.px-vhold--reel::before,
+.px-vhold--reel::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  z-index: 5;
+  background: #14160e;
+  pointer-events: none;
+}
+.px-vhold--reel::before { top: 0; height: 68px; }
+.px-vhold--reel::after  { bottom: 0; height: 200px; }
+.px-vhold--reel iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 9/16;
+  border: none;
+}
+.px-vhold--reel figcaption { z-index: 10; bottom: 206px; }
+
+/* ── D · MOSAIC / CONTENT ── */
+.px-mosaic { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 22px 0; grid-auto-flow: dense; }
+.pm { position: relative; overflow: hidden; background: #222; grid-column: span 1; margin: 0; }
+.pm-2 { grid-column: span 2; }
+.pm img, .pm video { width: 100%; height: 100%; object-fit: cover; aspect-ratio: 4/3; display: block; transition: transform .9s cubic-bezier(.2,.8,.2,1); }
+.pm-2 img, .pm-2 video { aspect-ratio: 16/9; }
+.pm:hover img, .pm:hover video { transform: scale(1.04); }
+
+/* ── EQUIPO TÉCNICO ── */
+.px-team {
+  padding: 0 22px 0;
+}
+.px-team-label { display: none; }
+.px-team-cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0 5vw;
+}
+.px-team-col { display: flex; flex-direction: column; }
+.px-team-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  padding: 14px 0; border-top: 1px solid rgba(233,236,224,.12);
+  font-family: var(--mono); font-size: .64rem; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+}
+.px-team-row span:last-child { text-align: right; }
+
+/* ── F · MULTIREGION ── */
+.px-regions { padding: 0 22px 0; }
+.px-region-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 10px; }
+.px-region-card { position: relative; overflow: hidden; background: #1a1c14; }
+.px-region-card img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; transition: transform .9s cubic-bezier(.2,.8,.2,1); }
+.px-region-card:hover img { transform: scale(1.04); }
+.prg-empty { aspect-ratio: 4/3; background: #1a1c14; }
+.prg-empty-h { aspect-ratio: unset; height: 100%; }
+.px-region-label { position: absolute; bottom: 12px; left: 12px; font-family: var(--mono); font-size: .58rem; font-weight: 700; letter-spacing: .2em; color: rgba(233,236,224,.9); background: rgba(0,0,0,.5); backdrop-filter: blur(6px); padding: 4px 10px; }
+.px-region-row { display: flex; gap: 10px; height: 300px; }
+.prc-v { flex: 1; overflow: hidden; background: #1a1c14; }
+.prc-h { flex: 2; overflow: hidden; background: #1a1c14; }
+.prc-v img, .prc-h img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.px-team-cols-4 { grid-template-columns: repeat(4, 1fr) !important; }
+
+/* ── MULTI-VIDEO ── */
+.px-multivid { display: flex; flex-direction: column; gap: 4vh; padding: 0 10vw 0; align-items: center; }
+.px-mv-frame { width: 100%; max-width: 860px; aspect-ratio: 16/9; background: #000; border-radius: 4px; overflow: hidden; }
+.px-mv-frame iframe { width: 100%; height: 100%; border: none; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 820px) {
+  .px-syn { grid-template-columns: 1fr; gap: 40px; padding: 7vh 22px 6vh; }
+  .px-quote { position: static; max-width: none; text-align: left; padding: 18px 22px 0; }
+  .px-stills-3 { grid-template-columns: 1fr 1fr; }
+  .px-gallery { grid-template-columns: 1fr 1fr; }
+  .px-vrow { grid-template-columns: repeat(2, 1fr); }
+  .px-mosaic { grid-template-columns: 1fr 1fr; }
+  .pm-2 { grid-column: span 2; }
+}
+@media (max-width: 520px) {
+  .px-stills-3 { grid-template-columns: 1fr; }
+  .px-gallery { grid-template-columns: 1fr; }
+  .px-vrow { grid-template-columns: 1fr 1fr; }
+  .px-mosaic { grid-template-columns: 1fr; }
+  .pm-2 { grid-column: span 1; }
+}
+</style>

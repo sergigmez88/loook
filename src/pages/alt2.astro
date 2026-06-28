@@ -1,0 +1,439 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+
+const heroMedia = 'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1600&q=85';
+
+// Señales / transmisiones (sin categorías) — foto + frase + sticker
+const signals = [
+  { id: 'SIGNAL 01', loc: 'TRACKSIDE · 41.38°N', img: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=1600&q=85', l1: 'A fraction of a second,', l2: 'the whole story.' },
+  { id: 'SIGNAL 02', loc: 'LIVE · 10,000 PAX',   img: 'https://images.unsplash.com/photo-1506157786151-b8491531f063?w=1600&q=85', l1: 'Ten thousand heartbeats,', l2: 'in a single frame.' },
+  { id: 'SIGNAL 03', loc: 'STAGE · 119 dB',      img: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1600&q=85', l1: 'Sound you can see.', l2: 'Light you can feel.' },
+];
+
+// Selected work — sala de control: 1 principal + 2 auxiliares
+const monitors = [
+  { ch: 'CH.01', title: 'MotoGP Season Highlights', client: 'Red Bull Racing', href: '/work/motogp-season-highlights', img: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=1400&q=85', main: true },
+  { ch: 'CH.02', title: 'Supersonic Festival', client: 'Primavera Sound', href: '/work/supersonic-festival', img: 'https://images.unsplash.com/photo-1506157786151-b8491531f063?w=800&q=85' },
+  { ch: 'CH.03', title: 'Neon Souls', client: 'LOOOK × IA', href: '/work/neon-souls-ia', img: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=800&q=85' },
+];
+---
+
+<BaseLayout title="LOOOK Studio — Mission Control">
+  <Nav />
+
+  <div class="crt" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+  <div class="scroll-prog"><div class="scroll-prog-bar" id="progBar"></div></div>
+
+  <main class="ops">
+
+    <!-- ═══ 1 · COCKPIT ═══ -->
+    <section class="cockpit">
+      <!-- TOP BAR -->
+      <div class="topbar">
+        <span class="tb-item"><span class="dot dot-lime"></span>MISSION: LOOOK-01</span>
+        <span class="tb-item tb-center">VISUAL OPERATIONS — BARCELONA</span>
+        <span class="tb-item"><span id="utc">UTC 00:00:00</span></span>
+      </div>
+
+      <!-- TITLE -->
+      <div class="cock-title">
+        <h1>LOOOK</h1>
+        <span class="ct-sub">CONTROL PANEL // V.MMXXV</span>
+      </div>
+
+      <!-- DASHBOARD -->
+      <div class="dash">
+        <!-- LEFT: radar + systems -->
+        <aside class="panel panel-l">
+          <span class="panel-h">// NAV — SCOPE</span>
+          <svg class="radar" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="56" fill="none" stroke="rgba(184,255,0,.25)" stroke-width="1"/>
+            <circle cx="60" cy="60" r="38" fill="none" stroke="rgba(184,255,0,.15)" stroke-width="1"/>
+            <circle cx="60" cy="60" r="20" fill="none" stroke="rgba(184,255,0,.15)" stroke-width="1"/>
+            <line x1="60" y1="4" x2="60" y2="116" stroke="rgba(184,255,0,.12)" stroke-width="1"/>
+            <line x1="4" y1="60" x2="116" y2="60" stroke="rgba(184,255,0,.12)" stroke-width="1"/>
+            <g class="radar-sweep"><path d="M60 60 L60 4 A56 56 0 0 1 110 78 Z" fill="url(#sweep)"/></g>
+            <circle class="blip blip-1" cx="84" cy="40" r="2.2" fill="#B8FF00"/>
+            <circle class="blip blip-2" cx="38" cy="78" r="1.8" fill="#B8FF00"/>
+            <circle class="blip blip-3" cx="74" cy="86" r="1.5" fill="#B8FF00"/>
+            <defs>
+              <linearGradient id="sweep" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="rgba(184,255,0,.4)"/>
+                <stop offset="100%" stop-color="rgba(184,255,0,0)"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="sys">
+            <div class="sys-row"><span class="dot dot-lime"></span>NAV<span class="sys-stat">ONLINE</span></div>
+            <div class="sys-row"><span class="dot dot-lime"></span>CAM<span class="sys-stat">ONLINE</span></div>
+            <div class="sys-row"><span class="dot dot-lime"></span>AUDIO<span class="sys-stat">ONLINE</span></div>
+            <div class="sys-row"><span class="dot dot-amber"></span>RENDER<span class="sys-stat">82%</span></div>
+          </div>
+        </aside>
+
+        <!-- CENTER: viewport (reel) -->
+        <div class="viewport">
+          <div class="vp-frame">
+            <img class="vp-media" src={heroMedia} alt=""/>
+            <video class="vp-media vp-vid" autoplay muted loop playsinline poster={heroMedia}>
+              <source src="/reel.mp4" type="video/mp4"/>
+            </video>
+            <div class="vp-overlay"></div>
+            <!-- retícula -->
+            <svg class="reticle" viewBox="0 0 100 100" aria-hidden="true">
+              <line x1="50" y1="12" x2="50" y2="30" stroke="#B8FF00" stroke-width=".6"/>
+              <line x1="50" y1="70" x2="50" y2="88" stroke="#B8FF00" stroke-width=".6"/>
+              <line x1="12" y1="50" x2="30" y2="50" stroke="#B8FF00" stroke-width=".6"/>
+              <line x1="70" y1="50" x2="88" y2="50" stroke="#B8FF00" stroke-width=".6"/>
+              <circle cx="50" cy="50" r="12" fill="none" stroke="rgba(184,255,0,.5)" stroke-width=".6"/>
+              <circle cx="50" cy="50" r="1.4" fill="#B8FF00"/>
+            </svg>
+            <span class="vp-corner c-tl"></span><span class="vp-corner c-tr"></span>
+            <span class="vp-corner c-bl"></span><span class="vp-corner c-br"></span>
+            <span class="vp-rec"><span class="dot dot-red"></span>REC · LOOOK-CAM 01</span>
+            <span class="vp-res">FEED · 3840×2160 · 24FPS</span>
+          </div>
+          <div class="vp-console" id="console">
+            <p>&gt; INITIALIZING VISUAL SYSTEMS........ <span class="ok">OK</span></p>
+            <p>&gt; CALIBRATING LENS · APERTURE f/1.4 .. <span class="ok">OK</span></p>
+            <p>&gt; FEED ACQUIRED — STORYTELLING MODE <span class="caret">▋</span></p>
+          </div>
+        </div>
+
+        <!-- RIGHT: telemetry -->
+        <aside class="panel panel-r">
+          <span class="panel-h">// TELEMETRY</span>
+          <div class="tele">
+            <div class="tele-row"><span class="tk">LAT</span><span class="tv">41.3851° N</span></div>
+            <div class="tele-row"><span class="tk">LON</span><span class="tv">2.1734° E</span></div>
+            <div class="tele-row"><span class="tk">VEL</span><span class="tv" id="vel">000 KM/H</span></div>
+            <div class="tele-row"><span class="tk">ALT</span><span class="tv" id="alt">0000 M</span></div>
+            <div class="tele-row"><span class="tk">T+</span><span class="tv" id="met">00:00:00</span></div>
+          </div>
+          <span class="panel-h">// SIGNAL</span>
+          <div class="bars" id="bars">
+            {Array.from({ length: 14 }).map((_, i) => <span class="bar" style={`--i:${i}`}></span>)}
+          </div>
+          <div class="tele-row"><span class="tk">PWR</span><span class="tv tv-lime">NOMINAL</span></div>
+        </aside>
+      </div>
+
+      <!-- BOTTOM STATUS -->
+      <div class="statusbar">
+        <div class="sb-marquee"><div class="sbm-track"><span>ALL SYSTEMS NOMINAL · VISUAL FEED ACTIVE · LOOOK STUDIO · BCN · NO LIMITS. JUST STORIES. · </span><span>ALL SYSTEMS NOMINAL · VISUAL FEED ACTIVE · LOOOK STUDIO · BCN · NO LIMITS. JUST STORIES. · </span></div></div>
+        <span class="sb-scroll">SCROLL ↓</span>
+      </div>
+    </section>
+
+    <!-- ═══ 2 · TRANSMISSIONS (señales) ═══ -->
+    <section class="trx" id="trx">
+      <div class="trx-sticky">
+        {signals.map((s, i) => (
+          <div class:list={['sig', i === 0 ? 'is-active' : '']} data-sig={i}>
+            <img class="sig-img" src={s.img} alt="" loading={i === 0 ? 'eager' : 'lazy'}/>
+            <div class="sig-grade"></div>
+          </div>
+        ))}
+        <!-- HUD frame -->
+        <span class="trx-corner tc-tl"></span><span class="trx-corner tc-tr"></span>
+        <span class="trx-corner tc-bl"></span><span class="trx-corner tc-br"></span>
+
+        <div class="sig-content">
+          <span class="sig-tag" id="sigTag"><span class="dot dot-lime"></span>SIGNAL 01 · DECODING</span>
+          <h2 class="sig-phrase" id="sigPhrase"><span class="sp1">A fraction of a second,</span><span class="sp2">the whole story.</span></h2>
+          <span class="sig-loc" id="sigLoc">TRACKSIDE · 41.38°N</span>
+        </div>
+
+        <div class="trx-count"><span id="sigNum">01</span> / 0{signals.length}</div>
+      </div>
+    </section>
+
+    <!-- ═══ 3 · CONTROL ROOM (selected work) ═══ -->
+    <section class="room">
+      <header class="room-head">
+        <span class="room-eye">// CONTROL ROOM — SELECTED FEEDS</span>
+        <a href="/work" class="room-all">ALL CHANNELS ↗</a>
+      </header>
+      <div class="room-grid">
+        {monitors.map((m) => (
+          <a href={m.href} class:list={['mon', m.main ? 'mon-main' : 'mon-aux']} data-hover>
+            <div class="mon-screen">
+              <img src={m.img} alt={m.title} loading="lazy"/>
+              <div class="mon-scan"></div>
+              <span class="mon-corner mc-tl"></span><span class="mon-corner mc-tr"></span>
+              <span class="mon-corner mc-bl"></span><span class="mon-corner mc-br"></span>
+              <span class="mon-ch"><span class="dot dot-red"></span>{m.ch}</span>
+              <span class="mon-live">● LIVE</span>
+              <div class="mon-over"><span>OPEN FEED ↗</span></div>
+            </div>
+            <div class="mon-cap">
+              <span class="mon-title">{m.title}</span>
+              <span class="mon-client">{m.client}</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- ═══ 4 · MANIFESTO TRANSMISSION ═══ -->
+    <section class="msg">
+      <span class="msg-eye"><span class="dot dot-lime"></span>INCOMING TRANSMISSION — LIFE / MANIFESTO</span>
+      <blockquote class="msg-q">
+        “Citizens of nowhere —<br><em>why don't you think, jump, fly.”</em>
+      </blockquote>
+      <a href="/life" class="msg-link">DECODE FULL MESSAGE →</a>
+    </section>
+
+    <!-- ═══ 5 · COMMS ═══ -->
+    <section class="comms">
+      <span class="comms-eye">// OPEN CHANNEL</span>
+      <a href="mailto:hola@loookstudio.com" class="comms-mail" data-hover>hola@loookstudio.com</a>
+      <div class="comms-freq">
+        <span class="cf-label">FREQUENCIES //</span>
+        <a href="#" data-hover>INSTAGRAM</a>
+        <a href="#" data-hover>VIMEO</a>
+        <a href="#" data-hover>LINKEDIN</a>
+      </div>
+      <div class="comms-foot">
+        <span>© LOOOK STUDIO · MMXXV</span>
+        <span>41.3851° N / 2.1734° E</span>
+        <span>SYSTEMS NOMINAL</span>
+      </div>
+    </section>
+
+  </main>
+</BaseLayout>
+
+<script>
+  const pad = (n: number) => String(n).padStart(2, '0');
+
+  // UTC clock + mission elapsed time
+  const utc = document.getElementById('utc');
+  const met = document.getElementById('met');
+  const t0 = Date.now();
+  setInterval(() => {
+    const d = new Date();
+    if (utc) utc.textContent = `UTC ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}`;
+    const e = Math.floor((Date.now() - t0) / 1000);
+    if (met) met.textContent = `${pad(Math.floor(e / 3600))}:${pad(Math.floor(e / 60) % 60)}:${pad(e % 60)}`;
+  }, 1000);
+
+  // telemetry random-walk
+  const vel = document.getElementById('vel');
+  const alt = document.getElementById('alt');
+  let v = 247, a = 1280;
+  setInterval(() => {
+    v += Math.round((Math.random() - 0.5) * 18); v = Math.max(180, Math.min(320, v));
+    a += Math.round((Math.random() - 0.5) * 60); a = Math.max(900, Math.min(1800, a));
+    if (vel) vel.textContent = `${pad(v)} KM/H`;
+    if (alt) alt.textContent = `${a} M`;
+  }, 900);
+
+  // transmissions cross-fade on scroll
+  const trx = document.getElementById('trx');
+  const sigs = document.querySelectorAll('.sig');
+  const sigData = [
+    { num: '01', tag: 'SIGNAL 01 · DECODING', l1: 'A fraction of a second,', l2: 'the whole story.', loc: 'TRACKSIDE · 41.38°N' },
+    { num: '02', tag: 'SIGNAL 02 · DECODING', l1: 'Ten thousand heartbeats,', l2: 'in a single frame.', loc: 'LIVE · 10,000 PAX' },
+    { num: '03', tag: 'SIGNAL 03 · DECODING', l1: 'Sound you can see.', l2: 'Light you can feel.', loc: 'STAGE · 119 dB' },
+  ];
+  const sigTag = document.getElementById('sigTag');
+  const sigNum = document.getElementById('sigNum');
+  const sp1 = document.querySelector('.sp1') as HTMLElement;
+  const sp2 = document.querySelector('.sp2') as HTMLElement;
+  const sigLoc = document.getElementById('sigLoc');
+  let curSig = 0; const NS = sigs.length;
+  const setSig = (i: number) => {
+    if (i === curSig || i < 0 || i >= NS) return;
+    sigs[curSig]?.classList.remove('is-active');
+    curSig = i; sigs[curSig]?.classList.add('is-active');
+    const d = sigData[i];
+    if (sigTag) sigTag.innerHTML = `<span class="dot dot-lime"></span>${d.tag}`;
+    if (sigNum) sigNum.textContent = d.num;
+    if (sp1) sp1.textContent = d.l1;
+    if (sp2) sp2.textContent = d.l2;
+    if (sigLoc) sigLoc.textContent = d.loc;
+  };
+
+  // progress + scroll
+  const bar = document.getElementById('progBar');
+  const onScroll = () => {
+    const max = document.body.scrollHeight - window.innerHeight;
+    if (bar && max > 0) bar.style.width = `${(window.scrollY / max) * 100}%`;
+    if (trx) {
+      const rect = trx.getBoundingClientRect();
+      const total = trx.offsetHeight - window.innerHeight;
+      if (total > 0) { const p = Math.max(0, Math.min(0.999, -rect.top / total)); setSig(Math.floor(p * NS)); }
+    }
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+</script>
+
+<style is:global>
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+</style>
+
+<style>
+/* ═══ TOKENS ═══ */
+.ops {
+  --bg: #05070a; --panel: rgba(184,255,0,.02);
+  --line: rgba(184,255,0,.16); --lime: #B8FF00; --amber: #FFB020; --red: #FF3B30;
+  --dim: rgba(255,255,255,.45); --mono: 'Space Mono', monospace;
+  background: var(--bg); color: #e8f0e0; font-family: var(--mono); overflow-x: hidden;
+}
+.ops a { color: inherit; }
+
+/* CRT FX */
+.crt { position: fixed; inset: 0; z-index: 901; pointer-events: none; background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.55) 100%); }
+.scanlines { position: fixed; inset: 0; z-index: 902; pointer-events: none; opacity: .5; background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 2px, rgba(0,0,0,.22) 3px); animation: flick .12s steps(2) infinite; }
+@keyframes flick { 0%{opacity:.5} 50%{opacity:.42} }
+.scroll-prog { position: fixed; top: 0; left: 0; width: 100%; height: 2px; background: rgba(184,255,0,.08); z-index: 950; }
+.scroll-prog-bar { height: 100%; width: 0; background: var(--lime); box-shadow: 0 0 8px var(--lime); }
+
+.dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+.dot-lime { background: var(--lime); box-shadow: 0 0 6px var(--lime); animation: blink 1.6s infinite; }
+.dot-amber { background: var(--amber); box-shadow: 0 0 6px var(--amber); animation: blink 1.2s infinite; }
+.dot-red { background: var(--red); box-shadow: 0 0 6px var(--red); animation: blink 1s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.25} }
+
+/* ═══ 1 · COCKPIT ═══ */
+.cockpit { min-height: 100vh; display: flex; flex-direction: column; padding: 84px 22px 16px; gap: 12px; }
+.topbar { display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--line); padding: 9px 14px; font-size: .6rem; font-weight: 700; letter-spacing: .14em; }
+.tb-item { display: flex; align-items: center; gap: 8px; color: var(--dim); }
+.tb-center { color: var(--lime); }
+
+.cock-title { display: flex; align-items: baseline; gap: 18px; padding: 4px 4px 0; }
+.cock-title h1 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(2.6rem, 7vw, 6.5rem); font-weight: 900; letter-spacing: -.04em; line-height: .85; color: #fff; text-shadow: 0 0 30px rgba(184,255,0,.25); }
+.ct-sub { font-size: .6rem; font-weight: 700; letter-spacing: .2em; color: var(--lime); }
+
+.dash { flex: 1; display: grid; grid-template-columns: 230px 1fr 230px; gap: 12px; min-height: 0; }
+.panel { border: 1px solid var(--line); background: var(--panel); padding: 12px; display: flex; flex-direction: column; gap: 12px; }
+.panel-h { font-size: .55rem; font-weight: 700; letter-spacing: .18em; color: var(--lime); opacity: .8; }
+
+/* radar */
+.radar { width: 100%; aspect-ratio: 1; }
+.radar-sweep { transform-origin: 60px 60px; animation: sweep 4s linear infinite; }
+@keyframes sweep { to { transform: rotate(360deg); } }
+.blip { animation: blipf 4s infinite; } .blip-2 { animation-delay: 1.3s; } .blip-3 { animation-delay: 2.6s; }
+@keyframes blipf { 0%,100%{opacity:.2} 10%{opacity:1} }
+
+.sys { display: flex; flex-direction: column; gap: 8px; margin-top: auto; }
+.sys-row { display: flex; align-items: center; gap: 9px; font-size: .6rem; font-weight: 700; letter-spacing: .1em; color: var(--dim); }
+.sys-stat { margin-left: auto; color: var(--lime); }
+
+/* viewport */
+.viewport { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.vp-frame { position: relative; flex: 1; border: 1px solid var(--line); overflow: hidden; min-height: 220px; }
+.vp-media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(.7) brightness(.85) contrast(1.1); }
+.vp-vid { z-index: 1; }
+.vp-overlay { position: absolute; inset: 0; background: linear-gradient(transparent, rgba(5,7,10,.5)); z-index: 2; box-shadow: inset 0 0 80px rgba(184,255,0,.06); }
+.reticle { position: absolute; top: 50%; left: 50%; width: 130px; height: 130px; transform: translate(-50%,-50%); z-index: 3; opacity: .8; }
+.vp-corner { position: absolute; width: 16px; height: 16px; border: 1.5px solid var(--lime); z-index: 3; }
+.c-tl { top: 8px; left: 8px; border-right: 0; border-bottom: 0; }
+.c-tr { top: 8px; right: 8px; border-left: 0; border-bottom: 0; }
+.c-bl { bottom: 8px; left: 8px; border-right: 0; border-top: 0; }
+.c-br { bottom: 8px; right: 8px; border-left: 0; border-top: 0; }
+.vp-rec { position: absolute; top: 14px; left: 32px; z-index: 4; display: flex; align-items: center; gap: 7px; font-size: .55rem; font-weight: 700; letter-spacing: .12em; color: #fff; }
+.vp-res { position: absolute; bottom: 14px; right: 32px; z-index: 4; font-size: .52rem; font-weight: 700; letter-spacing: .12em; color: var(--lime); }
+.vp-console { border: 1px solid var(--line); background: var(--panel); padding: 8px 12px; font-size: .56rem; line-height: 1.7; color: var(--dim); letter-spacing: .04em; }
+.vp-console .ok { color: var(--lime); }
+.caret { color: var(--lime); animation: blink 1s steps(2) infinite; }
+
+/* telemetry */
+.tele { display: flex; flex-direction: column; gap: 7px; }
+.tele-row { display: flex; justify-content: space-between; font-size: .62rem; font-weight: 700; letter-spacing: .08em; }
+.tk { color: var(--dim); } .tv { color: #fff; } .tv-lime { color: var(--lime); }
+.bars { display: flex; align-items: flex-end; gap: 3px; height: 46px; }
+.bar { flex: 1; background: var(--lime); opacity: .8; height: 30%; animation: eq 1.1s ease-in-out infinite; animation-delay: calc(var(--i) * -0.08s); }
+@keyframes eq { 0%,100%{height:20%} 50%{height:100%} }
+
+/* status bar */
+.statusbar { display: flex; align-items: center; gap: 14px; border: 1px solid var(--line); padding: 8px 12px; }
+.sb-marquee { flex: 1; overflow: hidden; }
+.sbm-track { display: flex; white-space: nowrap; animation: mq 26s linear infinite; }
+.sbm-track span { font-size: .58rem; font-weight: 700; letter-spacing: .14em; color: var(--dim); }
+@keyframes mq { to { transform: translateX(-50%); } }
+.sb-scroll { font-size: .55rem; font-weight: 700; letter-spacing: .2em; color: var(--lime); white-space: nowrap; }
+
+/* ═══ 2 · TRANSMISSIONS ═══ */
+.trx { height: 360vh; position: relative; }
+.trx-sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+.sig { position: absolute; inset: 0; opacity: 0; transition: opacity .8s ease; }
+.sig.is-active { opacity: 1; }
+.sig-img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.8) contrast(1.05); transform: scale(1.05); }
+.sig.is-active .sig-img { animation: sz 7s ease-out forwards; }
+@keyframes sz { from{transform:scale(1.12)} to{transform:scale(1.02)} }
+.sig-grade { position: absolute; inset: 0; background: linear-gradient(105deg, rgba(5,7,10,.85), rgba(5,7,10,.35) 55%, rgba(5,7,10,.2)); }
+.trx-corner { position: absolute; width: 30px; height: 30px; border: 1.5px solid var(--lime); z-index: 4; opacity: .7; }
+.tc-tl { top: 28px; left: 28px; border-right: 0; border-bottom: 0; }
+.tc-tr { top: 28px; right: 28px; border-left: 0; border-bottom: 0; }
+.tc-bl { bottom: 28px; left: 28px; border-right: 0; border-top: 0; }
+.tc-br { bottom: 28px; right: 28px; border-left: 0; border-top: 0; }
+.sig-content { position: absolute; left: 6vw; top: 50%; transform: translateY(-50%); z-index: 5; max-width: 64vw; }
+.sig-tag { display: inline-flex; align-items: center; gap: 9px; font-size: .62rem; font-weight: 700; letter-spacing: .2em; color: var(--lime); margin-bottom: 22px; }
+.sig-phrase { font-family: 'Space Grotesk', sans-serif; font-weight: 800; letter-spacing: -.02em; line-height: 1.05; }
+.sig-phrase .sp1, .sig-phrase .sp2 { display: block; font-size: clamp(2rem, 5vw, 4.6rem); color: #fff; }
+.sig-phrase .sp2 { color: rgba(255,255,255,.5); font-weight: 300; font-style: italic; }
+.sig-loc { display: block; margin-top: 24px; font-size: .62rem; font-weight: 700; letter-spacing: .16em; color: var(--dim); }
+.trx-count { position: absolute; bottom: 7%; right: 6%; z-index: 5; font-size: .7rem; font-weight: 700; letter-spacing: .15em; color: var(--dim); }
+.trx-count #sigNum { color: var(--lime); }
+
+/* ═══ 3 · CONTROL ROOM ═══ */
+.room { padding: 9vh 22px; border-top: 1px solid var(--line); }
+.room-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 26px; }
+.room-eye { font-size: .62rem; font-weight: 700; letter-spacing: .2em; color: var(--lime); }
+.room-all { font-size: .62rem; font-weight: 700; letter-spacing: .14em; color: var(--dim); transition: color .2s; }
+.room-all:hover { color: var(--lime); }
+.room-grid { display: grid; grid-template-columns: 2fr 1fr; grid-auto-rows: 1fr; gap: 14px; height: 78vh; }
+.mon-main { grid-row: span 2; }
+.mon { display: flex; flex-direction: column; gap: 8px; }
+.mon-screen { position: relative; flex: 1; border: 1px solid var(--line); overflow: hidden; background: #000; min-height: 0; }
+.mon-screen img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.75) brightness(.78) contrast(1.08); transition: transform .8s, filter .4s; }
+.mon:hover .mon-screen img { transform: scale(1.04); filter: saturate(1) brightness(.92); }
+.mon-scan { position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(to bottom, transparent 0 2px, rgba(0,0,0,.25) 3px); opacity: .4; }
+.mon-corner { position: absolute; width: 13px; height: 13px; border: 1.5px solid var(--lime); z-index: 3; opacity: .8; }
+.mc-tl { top: 8px; left: 8px; border-right: 0; border-bottom: 0; }
+.mc-tr { top: 8px; right: 8px; border-left: 0; border-bottom: 0; }
+.mc-bl { bottom: 8px; left: 8px; border-right: 0; border-top: 0; }
+.mc-br { bottom: 8px; right: 8px; border-left: 0; border-top: 0; }
+.mon-ch { position: absolute; top: 14px; left: 28px; z-index: 4; display: flex; align-items: center; gap: 7px; font-size: .55rem; font-weight: 700; letter-spacing: .12em; color: #fff; }
+.mon-live { position: absolute; top: 14px; right: 16px; z-index: 4; font-size: .52rem; font-weight: 700; letter-spacing: .1em; color: var(--red); }
+.mon-over { position: absolute; inset: 0; z-index: 4; display: flex; align-items: center; justify-content: center; background: rgba(5,7,10,.5); opacity: 0; transition: opacity .3s; }
+.mon:hover .mon-over { opacity: 1; }
+.mon-over span { font-size: .62rem; font-weight: 700; letter-spacing: .2em; color: var(--lime); }
+.mon-cap { display: flex; justify-content: space-between; gap: 12px; font-size: .58rem; font-weight: 700; letter-spacing: .08em; }
+.mon-title { color: #fff; }
+.mon-client { color: var(--dim); text-transform: uppercase; white-space: nowrap; }
+
+/* ═══ 4 · MANIFESTO ═══ */
+.msg { padding: 13vh 22px; border-top: 1px solid var(--line); position: relative; }
+.msg-eye { display: inline-flex; align-items: center; gap: 9px; font-size: .62rem; font-weight: 700; letter-spacing: .2em; color: var(--lime); margin-bottom: 30px; }
+.msg-q { font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.6rem, 4vw, 3.6rem); font-weight: 800; line-height: 1.18; letter-spacing: -.02em; max-width: 18ch; margin-bottom: 34px; color: #fff; }
+.msg-q em { font-weight: 300; font-style: italic; color: rgba(255,255,255,.55); }
+.msg-link { font-size: .66rem; font-weight: 700; letter-spacing: .16em; color: var(--lime); border-bottom: 1px solid var(--line); padding-bottom: 4px; transition: border-color .2s; }
+.msg-link:hover { border-color: var(--lime); }
+
+/* ═══ 5 · COMMS ═══ */
+.comms { padding: 11vh 22px 30px; border-top: 1px solid var(--line); }
+.comms-eye { font-size: .62rem; font-weight: 700; letter-spacing: .2em; color: var(--lime); display: block; margin-bottom: 26px; }
+.comms-mail { font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.6rem, 5vw, 4.2rem); font-weight: 700; letter-spacing: -.02em; color: #fff; transition: color .2s; }
+.comms-mail:hover { color: var(--lime); }
+.comms-freq { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin: 36px 0; font-size: .64rem; font-weight: 700; letter-spacing: .14em; }
+.cf-label { color: var(--dim); }
+.comms-freq a { color: #fff; transition: color .2s; }
+.comms-freq a:hover { color: var(--lime); }
+.comms-foot { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; border-top: 1px solid var(--line); padding-top: 18px; font-size: .56rem; font-weight: 700; letter-spacing: .1em; color: var(--dim); }
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 900px) {
+  .dash { grid-template-columns: 1fr; }
+  .panel-l, .panel-r { flex-direction: row; flex-wrap: wrap; align-items: center; }
+  .radar { width: 120px; }
+  .room-grid { grid-template-columns: 1fr; grid-auto-rows: 40vh; height: auto; }
+  .mon-main { grid-row: span 1; }
+  .sig-content { max-width: 88vw; }
+}
+</style>

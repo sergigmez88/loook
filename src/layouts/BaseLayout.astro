@@ -1,0 +1,47 @@
+---
+export interface Props {
+  title?: string;
+  description?: string;
+  siteBar?: boolean;
+}
+const { title = 'LOOOK Studio', description = 'Audiovisual production studio', siteBar = true } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content={description} />
+  <title>{title}</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+</head>
+<body>
+  <div class="cursor-dot" id="cursorDot"></div>
+  <slot />
+
+  {siteBar && (
+    <footer class="sitebar">
+      <span class="sb-name">LOOOK STUDIO</span>
+      <span>© MMXXVI — ALL RIGHTS RESERVED</span>
+    </footer>
+  )}
+
+  <script>
+    const dot = document.getElementById('cursorDot');
+    window.addEventListener('mousemove', (e) => {
+      if (dot) dot.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+    });
+    const SEL = 'a, button, [data-hover], input, textarea';
+    document.addEventListener('mouseover', (e) => { if ((e.target as HTMLElement).closest(SEL)) dot?.classList.add('is-hover'); });
+    document.addEventListener('mouseout', (e) => { if ((e.target as HTMLElement).closest(SEL)) dot?.classList.remove('is-hover'); });
+    window.addEventListener('mousedown', () => dot?.classList.add('is-down'));
+    window.addEventListener('mouseup', () => dot?.classList.remove('is-down'));
+  </script>
+</body>
+</html>
+
+<style is:global>
+  @import '../styles/global.css';
+</style>

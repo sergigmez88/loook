@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import { projects } from '../content/projects';
+import { resolveImg } from '../utils/resolveImg';
+
+const eventProjects = [...projects]
+  .filter(p => p.eventOnly)
+  .sort((a, b) => b.year - a.year);
+---
+
+<BaseLayout title="Event Photography — LOOOK Studio">
+  <Nav page="work" />
+
+  <main class="ev">
+    <header class="ev-head">
+      <a href="/work" class="ev-back" data-hover>← WORK</a>
+      <h1 class="ev-h">Event<br><em class="serif">Photography</em></h1>
+    </header>
+
+    <div class="ev-grid">
+      {eventProjects.map((p) => (
+        <a class="ev-item" href={`/work/${p.slug}`} data-hover data-reveal>
+          <div class="ev-item-media">
+            <img src={resolveImg(p.thumb)} alt={p.title} loading="lazy" decoding="async"/>
+          </div>
+          <div class="ev-bar">
+            <span class="ev-bar-l">{p.year}</span>
+            <span class="ev-bar-t">{p.shortTitle ?? p.title}</span>
+            <span class="ev-bar-r">{p.client}</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  const io = new IntersectionObserver((es) => {
+    es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
+</script>
+
+<style>
+.ev {
+  --bg: #14160e; --ink: #e9ece0; --lime: #E84010;
+  --mono: 'Space Mono', monospace; --serif: 'Fraunces', Georgia, serif;
+  background: var(--bg); color: var(--ink);
+  padding: 16vh 5vw 8vh; min-height: 100vh;
+}
+.serif { font-family: var(--serif); font-weight: 400; font-style: italic; }
+
+.ev-head { margin-bottom: 6vh; }
+.ev-back { font-family: var(--mono); font-size: .62rem; font-weight: 700; letter-spacing: .16em; color: rgba(233,236,224,.45); display: inline-block; margin-bottom: 28px; transition: color .2s; }
+.ev-back:hover { color: var(--lime); }
+.ev-h { font-size: clamp(2.6rem, 8vw, 7rem); font-weight: 900; letter-spacing: -.04em; line-height: .88; }
+.ev-h .serif { color: var(--lime); }
+
+.ev-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+[data-reveal] { opacity: 0; transform: translateY(20px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1); }
+[data-reveal].in { opacity: 1; transform: none; }
+
+.ev-item { display: block; }
+.ev-item-media { position: relative; aspect-ratio: 4/3; overflow: hidden; background: #1a1c14; }
+.ev-item-media img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.85) brightness(.85); transition: transform .8s cubic-bezier(.2,.8,.2,1), filter .4s; }
+.ev-item:hover .ev-item-media img { transform: scale(1.05); filter: saturate(1.05) brightness(1); }
+.ev-bar { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; padding: 10px 2px; border-top: 1px solid rgba(233,236,224,.14); font-family: var(--mono); font-size: .58rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.ev-bar-l { color: rgba(233,236,224,.4); white-space: nowrap; }
+.ev-bar-t { text-align: center; color: var(--ink); transition: color .25s; }
+.ev-bar-r { text-align: right; color: rgba(233,236,224,.4); white-space: nowrap; }
+.ev-item:hover .ev-bar-t { color: var(--lime); }
+
+@media (max-width: 900px) { .ev-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px) { .ev-grid { grid-template-columns: 1fr; } }
+</style>

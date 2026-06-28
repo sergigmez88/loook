@@ -1,0 +1,122 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Nav from '../../components/Nav.astro';
+import { projects, CATEGORY_COLORS } from '../../content/projects';
+import { resolveImg } from '../../utils/resolveImg';
+
+const sorted = [...projects].filter(p => !p.eventOnly).sort((a, b) => b.year - a.year);
+
+const categories = ['All', ...Object.keys(CATEGORY_COLORS)];
+---
+
+<BaseLayout title="Work — LOOOK Studio">
+  <Nav page="work" />
+
+  <main class="wx">
+    <header class="wx-head">
+      <h1 class="wx-h">Work<span class="serif lime">.</span></h1>
+      <span class="wx-count" id="wxCount">{sorted.length} PROJECTS</span>
+    </header>
+
+    <nav class="wx-filter" id="wxFilter">
+      {categories.map((c) => (
+        <button class:list={['wx-fbtn', { active: c === 'All' }]} data-cat={c} data-hover>{c}</button>
+      ))}
+    </nav>
+
+    <div class="wx-grid" id="wxGrid">
+      {sorted.map((p) => (
+        <a class="wx-item" href={`/work/${p.slug}`} data-category={(p.categories ?? [p.category]).join(' ')} data-hover data-reveal>
+          <div class="wx-item-media">
+            <img src={resolveImg(p.thumb)} alt={p.title} loading="lazy" decoding="async"/>
+          </div>
+          <div class="wx-bar">
+            <span class="wx-bar-l">{p.format}</span>
+            <span class="wx-bar-t">{p.title}</span>
+            <span class="wx-bar-r">{p.client}</span>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <div class="wx-events-more" id="wxEventsMore">
+      <a href="/events" class="wx-events-btn" data-hover>
+        EVENT PHOTOGRAPHY <span>↗</span>
+      </a>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const initCat = params.get('cat') || 'All';
+  const btns = document.querySelectorAll<HTMLButtonElement>('.wx-fbtn');
+  const items = document.querySelectorAll<HTMLElement>('.wx-item');
+  const count = document.getElementById('wxCount');
+
+  const eventsMore = document.getElementById('wxEventsMore');
+
+  function apply(cat: string) {
+    let n = 0;
+    btns.forEach((b) => b.classList.toggle('active', b.dataset.cat === cat));
+    items.forEach((it) => {
+      const show = cat === 'All' || (it.dataset.category ?? '').split(' ').includes(cat);
+      it.style.display = show ? '' : 'none';
+      if (show) n++;
+    });
+    if (count) count.textContent = `${n} PROJECT${n === 1 ? '' : 'S'}`;
+    if (eventsMore) eventsMore.style.display = cat === 'Events' ? 'flex' : 'none';
+    const url = new URL(window.location.href);
+    if (cat === 'All') url.searchParams.delete('cat'); else url.searchParams.set('cat', cat);
+    history.replaceState({}, '', url);
+  }
+  apply(initCat);
+  btns.forEach((b) => b.addEventListener('click', () => apply(b.dataset.cat || 'All')));
+
+  const io = new IntersectionObserver((es) => {
+    es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+  items.forEach((el) => io.observe(el));
+
+</script>
+
+<style>
+.wx {
+  --bg: #14160e; --ink: #e9ece0; --lime: #E84010; --mono: 'Space Mono', monospace; --serif: 'Fraunces', Georgia, serif;
+  background: var(--bg); color: var(--ink); padding: 16vh 5vw 8vh; min-height: 100vh;
+}
+.serif { font-family: var(--serif); font-weight: 400; font-style: italic; }
+.lime { color: var(--lime); }
+
+.wx-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; }
+.wx-h { font-size: clamp(2.6rem, 8vw, 7rem); font-weight: 900; letter-spacing: -.04em; line-height: .9; }
+.wx-h .serif { font-weight: 400; }
+.wx-count { font-family: var(--mono); font-size: .62rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: rgba(233,236,224,.45); white-space: nowrap; }
+
+.wx-filter { display: flex; flex-wrap: wrap; gap: 6px 26px; padding: 18px 0 36px; border-top: 1px solid rgba(233,236,224,.14); }
+.wx-fbtn { background: none; border: none; font-family: var(--mono); font-size: .64rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: rgba(233,236,224,.4); transition: color .2s; padding: 0; }
+.wx-fbtn:hover { color: var(--ink); }
+.wx-fbtn.active { color: var(--lime); }
+
+[data-reveal] { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1); }
+[data-reveal].in { opacity: 1; transform: none; }
+
+.wx-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px 16px; }
+.wx-item { display: block; }
+.wx-item-media { position: relative; aspect-ratio: 16/10; overflow: hidden; background: #222; }
+.wx-item-media img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.85) brightness(.85); transition: transform .8s cubic-bezier(.2,.8,.2,1), filter .4s; }
+.wx-item:hover .wx-item-media img { transform: scale(1.05); filter: saturate(1.05) brightness(1); }
+.wx-bar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 12px 2px; border-top: 1px solid rgba(233,236,224,.14); font-family: var(--mono); font-size: .6rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.wx-bar-l { text-align: left; color: rgba(233,236,224,.5); }
+.wx-bar-t { text-align: center; color: var(--ink); transition: color .25s; }
+.wx-bar-r { text-align: right; color: rgba(233,236,224,.5); }
+.wx-item:hover .wx-bar-t { color: var(--lime); }
+
+.wx-events-more { display: none; justify-content: center; padding: 4vh 0 0; }
+.wx-events-btn { font-family: var(--mono); font-size: .55rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: rgba(233,236,224,.35); border: 1px solid rgba(233,236,224,.18); padding: 10px 22px; transition: color .2s, border-color .2s; }
+.wx-events-btn:hover { color: var(--ink); border-color: rgba(233,236,224,.5); }
+.wx-events-btn span { margin-left: 5px; }
+
+@media (max-width: 820px) { .wx-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px) { .wx-grid { grid-template-columns: 1fr; } }
+</style>
